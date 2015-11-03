@@ -7,6 +7,22 @@
 </head>
 <body>
 <h1>DatTables KeepConditions Plugin - <i>Advanced</i></h1>
+<i>Source Used</i>
+<pre>
+    $(document).ready(function() {
+        $('#example-1').DataTable({
+            dom: 'lftipr',
+            pageLength: 25,
+            keepConditions: {
+                search: true,
+                order: true,
+                page: true,
+                length: true
+            }
+        });
+    } );
+</pre>
+<hr/>
 <table id="example-1" class="display" cellspacing="0" width="100%">
     <thead>
     <tr>

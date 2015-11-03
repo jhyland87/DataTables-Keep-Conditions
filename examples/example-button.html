@@ -8,6 +8,20 @@
     <link rel="stylesheet" type="text/css" href="http://cdn.datatables.net/buttons/1.0.3/css/buttons.dataTables.min.css">
 </head>
 <body>
+<h1>DatTables KeepConditions Plugin - <i>Basic w/ Button</i></h1>
+<i>Source Used</i>
+<pre>
+    $(document).ready(function() {
+        $('#example-1').DataTable({
+            keepConditions: true,
+            dom: 'Blftipr',
+            buttons: [
+                'copyConditions'
+            ]
+        });
+    } );
+</pre>
+<hr/>
 <table id="example-1" class="display" cellspacing="0" width="100%">
     <thead>
     <tr>
