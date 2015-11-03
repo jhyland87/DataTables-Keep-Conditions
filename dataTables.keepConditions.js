@@ -7,6 +7,7 @@
  * @author      Justin Hyland (http://www.justinhyland.com)
  * @contact     j@linux.com
  * @copyright   Copyright 2015 Justin Hyland
+ * @url         https://github.com/jhyland87/DataTables-Keep-Conditions
  *
  * License      MIT - http://datatables.net/license/mit
  *
@@ -16,11 +17,13 @@
  * and implemented to the table on dt.init
  *
  * @example
+ *    // Basic Initialization (All conditions by default)
  *    $('#example').DataTable({
  *        keepConditions: true
  *    });
  *
  * @example
+ *    // Advanced Initialization (Selecting all conditions individually)
  *    $('#example').DataTable({
  *        keepConditions: {
  *           page:   true,
@@ -29,6 +32,16 @@
  *           order:  true
  *        }
  *    });
+ *
+ * @example
+ *    // Basic Initialization with "Copy Conditions" button
+ *    $('#example').DataTable({
+ *        keepConditions: true,
+ *        buttons: [
+ *           'copyConditions'
+ *        ]
+ *    });
+ *
  */
 
 (function(window, document, $) {
