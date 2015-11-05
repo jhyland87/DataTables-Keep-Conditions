@@ -39,3 +39,25 @@ $('#example-1').DataTable({
     ]
 });
 ```
+
+Multiple Tables, Basic & Advanced w/ Button
+```javascript
+$('#example-1').DataTable({
+    dom: 'Blftipr',
+    keepConditions: true,
+    buttons: [
+        'copyConditions'
+    ]
+});
+
+$('.example-2').DataTable({ // Using Class
+    dom: 'lftipr',
+    pageLength: 25,
+    keepConditions: {
+        search: true,
+        order: true,
+        page: true,
+        length: true
+    }
+});
+```
