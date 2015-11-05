@@ -70,38 +70,99 @@
 
     // Update the URL hash by processing the DT instance settings (page,
     // length, search, etc) and setting the URL hash string value
+    // @todo Something tells me this is going to need improvement
     function updateHash( e ){
-        var api     = e.data.api,
-            options = e.data.options;
+        var api         = e.data.api,
+            options     = e.data.options,
+            this_id     = $( api.table().node() ).attr('id'),
+            hash        = {}, // End result hash (will be processed into URL hash)
+            this_hash   = [], // The conditions for THIS table
+            url_hash    = []; // Gets joined by &
 
-        var hash = [];
+        // Grab all the existing hashes - to carefuly not disturb any conditions NOT for this table
+        $.each(queryString(), function(table, cons){
+
+            if( ! table && ! cons ) return;
+
+            // If this id isn't this table, store the hash and move on
+            if( table !== this_id ){
+                hash[ table ] = cons || '';
+            }
+            // Were ignoring THIS table id because were going to re-create it
+        });
 
         if( options.keepConditions === true
             || options.keepConditions.order === true
             && api.order()[0]
             && JSON.stringify(api.order()) !== JSON.stringify($.fn.dataTable.defaults.aaSorting ) )
-                hash.push( 'order=' + api.order()[0][0]+':'+api.order()[0][1] );
+                this_hash.push( 'o' + api.order()[0][1].charAt(0) + api.order()[0][0] );
 
         if( options.keepConditions === true
             || options.keepConditions.search === true
             && api.search() )
-                hash.push( 'search='+api.search() );
+                this_hash.push( 's'+api.search() );
 
         // Only set the page if its not the default
         if( options.keepConditions === true
             || options.keepConditions.page === true
             && api.page.info()
             && api.page.info().page !== 0 )
-                hash.push( 'page='+api.page.info().page );
+                this_hash.push( 'p'+api.page.info().page );
 
         // Only set the length if its not the default
         if( options.keepConditions === true
             || options.keepConditions.length === true
             &&  api.page.len()
             && api.page.len() !== (options.pageLength || 10) )
-                hash.push( 'length=' + api.page.len() );
+                this_hash.push( 'l' + api.page.len() );
 
-        window.location.hash = hash.join('&');
+        hash[this_id] = this_hash.join(':');
+
+        $.each(hash, function(table,conditions){
+            if( ! conditions) return;
+
+            url_hash.push(table +'='+conditions);
+        });
+
+        window.location.hash = url_hash.join('&');
+    }
+
+    function parseHash(id){
+        var conditions = {};
+
+        $.each(queryString(), function(table, cons){
+
+            if(table !== id)
+                return;
+
+            // @todo check if table is a DT table
+            var availableCons = {
+                    s: 'search',
+                    o: 'order',
+                    l: 'length',
+                    p: 'page'
+                },
+                parsedCons = {};
+
+            $.each(cons.split(':'), function(i,c){
+                if( typeof availableCons[ c.charAt(0) ] !== 'undefined' )
+                    switch( c.charAt(0) ){
+                        case 'o':
+                            var dir = { a: 'asc', d: 'desc' };
+                            parsedCons[ availableCons[ c.charAt(0) ] ] = [
+                                parseInt( c.substring(1).substring(1) ), dir[ c.substring(1).charAt(0) ]
+                            ];
+                            break;
+                        default:
+                            parsedCons[ availableCons[ c.charAt(0) ] ] = c.substring(1);
+                            break;
+                    }
+            });
+
+            conditions = parsedCons;
+        });
+
+        return conditions;
     }
 
     // On DT Initialization
@@ -114,22 +175,25 @@
         if ($.isPlainObject(options) || options === true) {
             var config     = $.isPlainObject(options) ? options : {},
                 api        = new $.fn.dataTable.Api( dtSettings ),
-                hash       = queryString(),
-                hashParams = { api: api, options: dtSettings.oInit };
+                hash       = parseHash($( api.table().node() ).attr('id')),
+                hashParams = {
+                    api: api,
+                    options: dtSettings.oInit
+                };
 
             // Order Condition
             if(options === true || options.order === true){
                 api.on( 'order.dt', hashParams , updateHash );
 
-                if ( hash.order )
-                    api.order( hash.order.split( ':' ) );
+                if ( typeof hash.order !== 'array' )
+                    api.order( hash.order );
             }
 
             // Search condition
             if(options === true || options.search === true) {
                 api.on( 'search.dt', hashParams, updateHash );
 
-                if ( hash.search )
+                if ( typeof hash.search !== 'undefined')
                     api.search( hash.search );
             }
 
@@ -137,7 +201,7 @@
             if(options === true || options.length === true) {
                 api.on( 'length.dt', hashParams, updateHash );
 
-                if ( hash.length )
+                if ( typeof hash.length !== 'undefined' )
                     api.page.len( parseInt( hash.length ) );
             }
 
