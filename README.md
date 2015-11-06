@@ -1,4 +1,4 @@
-# DataTables Keep Conditions #
+# DataTables Plugin - Keep Conditions #
 
 Store the DataTable conditions within the URL hash every time a condition is changed, such as the page, length, search or a column order, making it possible to copy/paste the URL. Once said URL is loaded, the conditions will be retrieved from the URL hash and implemented to the table on DT initialization
 
