@@ -4,6 +4,19 @@ Store the DataTable conditions within the URL hash every time a condition is cha
 
 *([Demo Here](http://www.justinhyland.com/p/dt/datatables-keep-conditions/examples/example-button.html#example-1=oa3:s201:p1:l25))*
 
+### Parameters ###
+Parameter 			  	| Type 		  		| Default | Description
+----------------------- | ----------------- | ------- | ------------
+`keepConditions`	  	| boolean/object	| true	  | Enable/Disable keepConditions plugin
+`keepConditions.page` 	| boolean		  	| true	  | Enable keepConditions for pagination
+`keepConditions.length` | boolean		  	| true	  | Enable keepConditions for page length
+`keepConditions.search` | boolean		  	| true	  | Enable keepConditions for table search/filter
+`keepConditions.order` 	| boolean		  	| true	  | Enable keepConditions for column ordering
+
+##### Keep Conditions Button #####
+Keep Conditions plugin comes with a button! As long as you properly setup the [buttons extension](http://datatables.net/extensions/buttons/), you can include the button `copyConditions`, which will display a button, when clicked, the URL will either be copied to the viewers clipboard (with the table conditions), or display an input with selected text, making it easy to copy and share the URL. An example if this is below.
+
+
 ### Example Usage ###
 
 Basic Initialization (Enabling for Paging, Length, Search and Order)

@@ -245,7 +245,9 @@
 
                 success = true;
             } catch (err) {
-                throw new Error('Didnt work :(');
+                dt.buttons.info( 'Copy URL','Copy be below input to easily share the URL<br><input id="keepConditions-input" value="'+document.location.href+'" style="width:90%;">', 10000 );
+
+                $( "input#keepConditions-input" ).select();
             }
             finally {
                 $( "input#copyConditions-text" ).remove();
