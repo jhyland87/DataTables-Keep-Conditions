@@ -4,6 +4,7 @@ Store the DataTable conditions within the URL hash every time a condition is cha
 
 #### Links ####
 * *[Live Demo](http://www.linuxdigest.org/misc/script_examples/DataTables-Keep-Conditions/examples/)*
+* *[Blog Post](http://www.linuxdigest.org/blog/2015/11/17/datatables-keep-conditions-plugin-link-to-the-exact-settings-within-the-current-table/)*
 
 ### Parameters ###
 Parameter 			  	| Type 		  		| Default | Description
