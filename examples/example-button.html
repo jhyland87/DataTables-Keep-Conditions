@@ -1,6 +1,11 @@
 <html>
 <head>
+    <title>DatTables KeepConditions Plugin - Basic w/ Button</title>
     <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="examples.js"></script>
+    <link rel="stylesheet" href="examples.css">
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/highlight.min.js"></script>
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/styles/default.min.css">
     <script src="http://cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"></script>
     <script src="../dataTables.keepConditions.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.0.3/js/dataTables.buttons.min.js"></script>
@@ -9,22 +14,23 @@
 </head>
 <body>
 <h1>DatTables KeepConditions Plugin - <i>Basic w/ Button</i></h1>
+<div class="content-box">
+    <strong>Description:</strong> Example of how <em>KeepConditions</em> can immediately load the DataTables conditions, as well as the <strong>Copy Conditions</strong> button.
+</div>
 <a href="index.html">Other Examples</a>
-<hr/>
-<i>Source Used</i>
-<pre>
-    $(document).ready(function() {
-        $('#example-1').DataTable({
-            keepConditions: true,
-            dom: 'Blftipr',
-            buttons: [
-                'copyConditions'
-            ]
-        });
-    } );
+<hr/><h2>Example Source Code</h2>
+<div id="example-source" class="content-box">
+    Here's the exact jQuery code for this plugin example</div>
+<pre id="example-js-preview">
+<code class="javascript">
+</code>
 </pre>
 <hr/>
-<table id="example-1" class="display" cellspacing="0" width="100%">
+<h2>Example DataTable</h2>
+<div class="content-box">
+    The table below was initiated with <em>KeepConditions</em>, and has the <em>Copy Conditions</em> button enabled, to make sharing the exact conditions easier
+</div>
+<table id="example" class="display" cellspacing="0" width="100%">
     <thead>
     <tr>
         <th>Name</th>
@@ -508,9 +514,10 @@
 </table>
 </body>
 </html>
-<script>
+<script id="example-js">
     $(document).ready(function() {
-        $('#example-1').DataTable({
+        // Initiate DataTables with the keepConditions set to true - enabling conditions for ALL enabled settings
+        $('#example').DataTable({
             keepConditions: true,
             dom: 'Blftipr',
             buttons: [

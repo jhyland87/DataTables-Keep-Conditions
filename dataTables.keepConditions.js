@@ -46,32 +46,32 @@
 
 (function(window, document, $) {
     // Process the URL hash into an object
-    function queryString(){
-        var queryString = {};
+    function _queryString(){
+        var _queryString = {};
         var query        = window.location.hash.substring(1);
         var vars         = query.split("&");
 
         for ( var i = 0; i < vars.length; i++)	{
             var pair = vars[ i ].split ( "=");
             // If first entry with this name
-            if ( typeof queryString[ pair [ 0 ] ] === "undefined") {
-                queryString[ pair [ 0 ] ] = pair [ 1 ];
+            if ( typeof _queryString[ pair [ 0 ] ] === "undefined") {
+                _queryString[ pair [ 0 ] ] = pair [ 1 ];
                 // If second entry with this name
-            } else if ( typeof queryString [ pair [ 0 ] ] === "string") {
-                queryString[ pair [ 0 ] ] = [ queryString [ pair [ 0 ] ], pair[ 1 ] ];
+            } else if ( typeof _queryString [ pair [ 0 ] ] === "string") {
+                _queryString[ pair [ 0 ] ] = [ _queryString [ pair [ 0 ] ], pair[ 1 ] ];
                 // If third or later entry with this name
             } else {
-                queryString[ pair [ 0 ] ].push ( pair [1 ]);
+                _queryString[ pair [ 0 ] ].push ( pair [1 ]);
             }
         }
 
-        return queryString || false;
+        return _queryString || false;
     }
 
     // Update the URL hash by processing the DT instance settings (page,
     // length, search, etc) and setting the URL hash string value
     // @todo Something tells me this is going to need improvement
-    function updateHash( e ){
+    function _updateHash( e ){
         var api         = e.data.api,
             options     = e.data.options,
             this_id     = $( api.table().node() ).attr('id'),
@@ -80,7 +80,7 @@
             url_hash    = []; // Gets joined by &
 
         // Grab all the existing hashes - to carefuly not disturb any conditions NOT for this table
-        $.each(queryString(), function(table, cons){
+        $.each(_queryString(), function(table, cons){
 
             if( ! table && ! cons ) return;
 
@@ -127,12 +127,17 @@
         window.location.hash = url_hash.join('&');
     }
 
-    function parseHash(id){
+    function _parseHash(id){
         var conditions = {};
 
-        $.each(queryString(), function(table, cons){
+        // Process each condition within the query string
+        $.each(_queryString(), function(table, cons){
+            // If somehow thers more than one condition for this table, just take the first one..
+            if ( typeof cons === 'array' || typeof cons === 'object' )
+                cons = cons[0];
 
-            if(table !== id)
+            // Ensure were processing the condition for the correct table
+            if( table !== id )
                 return;
 
             // @todo check if table is a DT table
@@ -175,7 +180,7 @@
         if ($.isPlainObject(options) || options === true) {
             var config     = $.isPlainObject(options) ? options : {},
                 api        = new $.fn.dataTable.Api( dtSettings ),
-                hash       = parseHash($( api.table().node() ).attr('id')),
+                hash       = _parseHash($( api.table().node() ).attr('id')),
                 hashParams = {
                     api: api,
                     options: dtSettings.oInit
@@ -183,7 +188,7 @@
 
             // Order Condition
             if(options === true || options.order === true){
-                api.on( 'order.dt', hashParams , updateHash );
+                api.on( 'order.dt', hashParams , _updateHash );
 
                 if ( typeof hash.order !== 'array' )
                     api.order( hash.order );
@@ -191,7 +196,7 @@
 
             // Search condition
             if(options === true || options.search === true) {
-                api.on( 'search.dt', hashParams, updateHash );
+                api.on( 'search.dt', hashParams, _updateHash );
 
                 if ( typeof hash.search !== 'undefined')
                     api.search( hash.search );
@@ -199,7 +204,7 @@
 
             // Length condition
             if(options === true || options.length === true) {
-                api.on( 'length.dt', hashParams, updateHash );
+                api.on( 'length.dt', hashParams, _updateHash );
 
                 if ( typeof hash.length !== 'undefined' )
                     api.page.len( parseInt( hash.length ) );
@@ -207,7 +212,7 @@
 
             // Page condition
             if(options === true || options.page === true) {
-                api.on( 'page.dt', hashParams, updateHash );
+                api.on( 'page.dt', hashParams, _updateHash );
 
                 if ( hash.page && parseInt( hash.page ) !== 0 )
                     api.page( parseInt( hash.page ) );

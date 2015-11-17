@@ -2,7 +2,7 @@
 
 Store the DataTable conditions within the URL hash every time a condition is changed, such as the page, length, search or a column order, making it possible to copy/paste the URL. Once said URL is loaded, the conditions will be retrieved from the URL hash and implemented to the table on DT initialization
 
-*([Demo Here](http://www.justinhyland.com/p/dt/datatables-keep-conditions/examples/example-button.html#example-1=oa3:s201:p1:l25))*
+*([Demo Here](http://linuxdigest.org/misc/script_examples/DataTables-Keep-Conditions/examples/example-button.html#example-1=oa3:s201:p1:l25))*
 
 ### Parameters ###
 Parameter 			  	| Type 		  		| Default | Description
