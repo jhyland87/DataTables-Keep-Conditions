@@ -100,7 +100,7 @@
         if( options.keepConditions === true
             || options.keepConditions.search === true
             && api.search() )
-                this_hash.push( 's'+api.search() );
+                this_hash.push( 's' + encodeURIComponent(api.search()) );
 
         // Only set the page if its not the default
         if( options.keepConditions === true
@@ -157,6 +157,9 @@
                             parsedCons[ availableCons[ c.charAt(0) ] ] = [
                                 parseInt( c.substring(1).substring(1) ), dir[ c.substring(1).charAt(0) ]
                             ];
+                            break;
+                        case 's': // The search string should be URL Decoded (Mainly for in case the : is used)
+                            parsedCons[ availableCons[ c.charAt(0) ] ] = decodeURIComponent( c.substring(1) );
                             break;
                         default:
                             parsedCons[ availableCons[ c.charAt(0) ] ] = c.substring(1);
