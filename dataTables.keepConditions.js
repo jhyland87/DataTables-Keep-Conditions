@@ -2,7 +2,7 @@
  * @summary     KeepConditions
  * @description Store the status of the DataTable within the URL, making
  *              sharing the exact page/length/etc via copy/paste possible
- * @version     1.0.0
+ * @version     1.1.0
  * @file        dataTables.keepConditions.js
  * @author      Justin Hyland (http://www.justinhyland.com)
  * @contact     j@linux.com
@@ -16,6 +16,14 @@
  * the URL. Once said URL is loaded, the conditions will be retrieved from the URL hash
  * and implemented to the table on dt.init
  *
+ * KeepConditions is compatable with the following settings/extensions/plugins:
+ *      Pagination
+ *      Page Length
+ *      Table Searching
+ *      Column Ordering
+ *      Scroller Extension ( http://datatables.net/extensions/scroller/ )
+ *      Column Visibility ( http://datatables.net/reference/button/colvis )
+ *
  * @example
  *    // Basic Initialization (All conditions by default)
  *    $('#example').DataTable({
@@ -26,10 +34,10 @@
  *    // Advanced Initialization (Selecting all conditions individually)
  *    $('#example').DataTable({
  *        keepConditions: {
- *           page:   true,
- *           length: true,
- *           search: true,
- *           order:  true
+ *           page:      true,
+ *           length:    true,
+ *           search:    true,
+ *           order:     true
  *        }
  *    });
  *
@@ -42,19 +50,38 @@
  *        ]
  *    });
  *
+ * @example
+ *    // Initialization with plugins
+ *    $('#example').DataTable({
+ *        ajax:           "dataSrc.txt",
+ *        deferRender:    true,
+ *        scrollY:        200,
+ *        scrollCollapse: true,
+ *        scroller:       true,
+ *        keepConditions: {
+ *           page:      false,
+ *           length:    true,
+ *           search:    true,
+ *           order:     true,
+ *           scroller:  true
+ *        }
+ *    });
+ *
  */
 
-(function(window, document, $) {
+(function(window, document, $, undefined) {
+    var _dtSettings;
+
     // Process the URL hash into an object
     function _queryString(){
         var _queryString = {};
-        var query        = window.location.hash.substring(1);
+        var query        = window.location.hash.substring( 1 );
         var vars         = query.split("&");
 
         for ( var i = 0; i < vars.length; i++)	{
             var pair = vars[ i ].split ( "=");
             // If first entry with this name
-            if ( typeof _queryString[ pair [ 0 ] ] === "undefined") {
+            if ( _queryString[ pair [ 0 ] ] === undefined) {
                 _queryString[ pair [ 0 ] ] = pair [ 1 ];
                 // If second entry with this name
             } else if ( typeof _queryString [ pair [ 0 ] ] === "string") {
@@ -68,66 +95,102 @@
         return _queryString || false;
     }
 
+    // Check if a specific condition is enabled for a specific table
+    function _isEnabled( setting ){
+        return ( _dtSettings.oInit.keepConditions === true || _dtSettings.oInit.keepConditions[ setting ] === true );
+    }
+
     // Update the URL hash by processing the DT instance settings (page,
     // length, search, etc) and setting the URL hash string value
     // @todo Something tells me this is going to need improvement
     function _updateHash( e ){
         var api         = e.data.api,
             options     = e.data.options,
-            this_id     = $( api.table().node() ).attr('id'),
+            tableID     = $( api.table().node() ).attr('id'),
             hash        = {}, // End result hash (will be processed into URL hash)
-            this_hash   = [], // The conditions for THIS table
-            url_hash    = []; // Gets joined by &
+            tableHash   = [], // The conditions for THIS table
+            urlHash     = []; // Gets joined by &
 
         // Grab all the existing hashes - to carefuly not disturb any conditions NOT for this table
         $.each(_queryString(), function(table, cons){
 
-            if( ! table && ! cons ) return;
+            if ( ! table && ! cons ) return;
 
             // If this id isn't this table, store the hash and move on
-            if( table !== this_id ){
+            if ( table !== tableID ){
                 hash[ table ] = cons || '';
             }
             // Were ignoring THIS table id because were going to re-create it
         });
 
-        if( options.keepConditions === true
-            || options.keepConditions.order === true
+        // Only set the order if the current order isn't the default order
+        // (taking into account the possibility of a custom setting)
+        if ( _isEnabled( 'order' )
             && api.order()[0]
             && JSON.stringify(api.order()) !== JSON.stringify($.fn.dataTable.defaults.aaSorting ) )
-                this_hash.push( 'o' + api.order()[0][1].charAt(0) + api.order()[0][0] );
+                tableHash.push( 'o' + api.order()[0][1].charAt( 0 ) + api.order()[0][0] );
 
-        if( options.keepConditions === true
-            || options.keepConditions.search === true
+        // Only set the search if something is searched for
+        if ( _isEnabled( 'search' )
             && api.search() )
-                this_hash.push( 's' + encodeURIComponent(api.search()) );
+                tableHash.push( 's' + encodeURIComponent(api.search()) );
 
         // Only set the page if its not the default
-        if( options.keepConditions === true
-            || options.keepConditions.page === true
+        if ( _isEnabled( 'page' )
             && api.page.info()
             && api.page.info().page !== 0 )
-                this_hash.push( 'p'+api.page.info().page );
+            tableHash.push( 'p'+api.page.info().page );
 
         // Only set the length if its not the default
-        if( options.keepConditions === true
-            || options.keepConditions.length === true
-            &&  api.page.len()
+        if ( _isEnabled( 'length' )
+            && api.page.len()
             && api.page.len() !== (options.pageLength || 10) )
-                this_hash.push( 'l' + api.page.len() );
+                tableHash.push( 'l' + api.page.len() );
 
-        hash[this_id] = this_hash.join(':');
+        // Only set the scroller position if the extension is included and the rounded scroller position isn't 0
+        if ( _isEnabled( 'scroller' )
+            && _dtSettings.oScroller !== undefined 
+            && Math.round(_dtSettings.oScroller.s.baseRowTop) !== 0){
+            // _dtSettings.oScroller.s.baseRowTop
+            // _dtSettings.oScroller.s.topRowFloat
+            // Math.round()
+            //console.debug('_dtSettings',_dtSettings);
+            tableHash.push( 'c' + Math.round(_dtSettings.oScroller.s.baseRowTop) );
+        }
+
+        // Only set column visibility if one or more columns are hidden, and only store the lesser value
+        // in the hash (Visible vs Hidden)
+        if ( _isEnabled( 'colvis' )
+            && api.columns().visible().filter( function ( v ) { return ! v; } ).any() ) {
+            var t = [], f = [];
+            // Add the visible col indexes to t, and hidden to f
+            api.columns().visible().each( function ( value, index ) {
+                if ( value === true )
+                    t.push( index );
+                else
+                    f.push( index );
+            } );
+
+            // If visible column count is greater, then use non-vis
+            if( t.length >= f.length )
+                tableHash.push( 'vf' + f.join('.') );
+            // Otherwise, use visible count
+            else
+                tableHash.push( 'vt' + t.join('.') );
+        }
+
+        hash[ tableID ] = tableHash.join(':');
 
         $.each(hash, function(table,conditions){
-            if( ! conditions) return;
+            if ( ! conditions) return;
 
-            url_hash.push(table +'='+conditions);
+            urlHash.push(table +'='+conditions);
         });
 
-        window.location.hash = url_hash.join('&');
+        window.location.hash = urlHash.join('&');
     }
 
-    function _parseHash(id){
+    function _parseHash( id ){
         var conditions = {};
 
         // Process each condition within the query string
@@ -137,7 +200,7 @@
                 cons = cons[0];
 
             // Ensure were processing the condition for the correct table
-            if( table !== id )
+            if ( table !== id )
                 return;
 
             // @todo check if table is a DT table
@@ -145,24 +208,42 @@
                     s: 'search',
                     o: 'order',
                     l: 'length',
-                    p: 'page'
+                    p: 'page',
+                    c: 'scroller',
+                    v: 'colvis'
                 },
                 parsedCons = {};
 
             $.each(cons.split(':'), function(i,c){
-                if( typeof availableCons[ c.charAt(0) ] !== 'undefined' )
-                    switch( c.charAt(0) ){
+                if ( availableCons[ c.charAt( 0 ) ] !== undefined )
+                    switch( c.charAt( 0 ) ){
+                        // Column Order
                         case 'o':
                             var dir = { a: 'asc', d: 'desc' };
-                            parsedCons[ availableCons[ c.charAt(0) ] ] = [
-                                parseInt( c.substring(1).substring(1) ), dir[ c.substring(1).charAt(0) ]
+                            parsedCons[ availableCons[ c.charAt( 0 ) ] ] = [
+                                parseInt( c.substring( 1 ).substring( 1 ) ), dir[ c.substring( 1 ).charAt( 0 ) ]
                             ];
                             break;
+                        // Search String
                         case 's': // The search string should be URL Decoded (Mainly for in case the : is used)
-                            parsedCons[ availableCons[ c.charAt(0) ] ] = decodeURIComponent( c.substring(1) );
+                            parsedCons[ availableCons[ c.charAt( 0 ) ] ] = decodeURIComponent( c.substring( 1 ) );
                             break;
+
+                        // Column Visibility
+                        case 'v':
+                            // If the header was messed with, just skip the col vis
+                            if ( c.charAt( 1 ) !== 'f' &&  c.charAt( 1 ) !== 't') return;
+
+                            parsedCons[ availableCons[ c.charAt( 0 ) ] ] = [
+                                // Dictate if this list is hidden or visible
+                                c.charAt( 1 ) === 't' ? 'visible' : 'hidden' ,
+                                // List of said columns
+                                c.substring( 1 ).substring( 1 ).split('.')
+                            ];
+                            break;
+
                         default:
-                            parsedCons[ availableCons[ c.charAt(0) ] ] = c.substring(1);
+                            parsedCons[ availableCons[ c.charAt( 0 ) ] ] = c.substring( 1 );
                             break;
                     }
             });
@@ -179,6 +260,7 @@
             return;
 
         var options = dtSettings.oInit.keepConditions;
+        _dtSettings = dtSettings;
 
         if ($.isPlainObject(options) || options === true) {
             var config     = $.isPlainObject(options) ? options : {},
@@ -190,7 +272,7 @@
                 };
 
             // Order Condition
-            if(options === true || options.order === true){
+            if ( _isEnabled( 'order' ) ){
                 api.on( 'order.dt', hashParams , _updateHash );
 
                 if ( typeof hash.order !== 'array' )
@@ -198,32 +280,64 @@
             }
 
             // Search condition
-            if(options === true || options.search === true) {
+            if ( _isEnabled( 'search' ) ) {
                 api.on( 'search.dt', hashParams, _updateHash );
 
-                if ( typeof hash.search !== 'undefined')
+                if ( hash.search !== undefined )
                     api.search( hash.search );
             }
 
             // Length condition
-            if(options === true || options.length === true) {
+            if ( _isEnabled( 'length' ) ) {
                 api.on( 'length.dt', hashParams, _updateHash );
 
-                if ( typeof hash.length !== 'undefined' )
+                if ( hash.length !== undefined )
                     api.page.len( parseInt( hash.length ) );
             }
 
             // Page condition
-            if(options === true || options.page === true) {
+            if ( _isEnabled( 'page' ) ) {
                 api.on( 'page.dt', hashParams, _updateHash );
 
                 if ( hash.page && parseInt( hash.page ) !== 0 )
                     api.page( parseInt( hash.page ) );
             }
 
+            if ( _isEnabled( 'scroller' ) ) {
+                api.on( 'draw.dt', hashParams, _updateHash );
+
+                if ( hash.scroller && parseInt( hash.scroller ) !== 0 )
+                    api.row( parseInt( hash.scroller ) ).scrollTo();
+            }
+
+            if ( _isEnabled( 'colvis' ) ) {
+                api.on( 'column-visibility.dt', hashParams, _updateHash );
+
+                if ( hash.colvis ) {
+                    api.columns().indexes().each( function ( value, index ) {
+                        // Parse as visible list
+                        if ( hash.colvis[ 0 ] === 'visible') {
+                            if ( $.inArray( value.toString(), hash.colvis[ 1 ] ) === - 1 ) {
+                                api.column( value ).visible( false );
+                            }
+                            else {
+                                api.column( value ).visible( true );
+                            }
+                        }
+                        // Parse as hidden list
+                        else {
+                            if (  $.inArray( value.toString(), hash.colvis[ 1 ] ) === - 1 ) {
+                                api.column( value ).visible( true );
+                            }
+                            else {
+                                api.column( value ).visible( false );
+                            }
+                        }
+                    } );
+                }
+            }
+
             api.draw( false );
-
-
         }
     });
 
@@ -260,7 +374,7 @@
             finally {
                 $( "input#copyConditions-text" ).remove();
 
-                if(typeof success === 'undefined'){
+                if ( success === undefined ){
                     dt.buttons.info( 'URL Copied', $( '<input />' ).val( document.location.href ).css({width: '90%'}), 6000 );
                 }
             }

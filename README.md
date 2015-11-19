@@ -1,6 +1,15 @@
 # DataTables Plugin - Keep Conditions #
 
-Store the DataTable conditions within the URL hash every time a condition is changed, such as the page, length, search or a column order, making it possible to copy/paste the URL. Once said URL is loaded, the conditions will be retrieved from the URL hash and implemented to the table on DT initialization
+Store the DataTable conditions within the URL hash every time a condition is changed, such as the page, length, search or a column order, making it possible to copy/paste the URL. Once said URL is loaded, the conditions will be retrieved from the URL hash and implemented to the table on DT initialization.
+
+The *Keep Conditions* plugin has the capability of keeping the conditions for the following:
+
+* Table Search String
+* Column Ordering
+* Pagination
+* Table Length
+* [Column Visibility](http://datatables.net/reference/button/colvis) (A [buttons](http://datatables.net/extensions/buttons/) extension)
+* [Scroll Position](https://datatables.net/extensions/scroller/)
 
 #### Links ####
 * *[Live Demo](http://www.linuxdigest.org/misc/script_examples/DataTables-Keep-Conditions/examples/)*
@@ -46,7 +55,7 @@ $('#example').DataTable({
 Basic Initialization (With button)
 
 ```javascript
-$('#example-1').DataTable({
+$('#example').DataTable({
     keepConditions: true,
     dom: 'Blfrtip',
     buttons: [
@@ -56,6 +65,7 @@ $('#example-1').DataTable({
 ```
 
 Multiple Tables, Basic & Advanced w/ Button
+
 ```javascript
 $('#example-1').DataTable({
     dom: 'Blftipr',
@@ -73,6 +83,30 @@ $('.example-2').DataTable({ // Using Class
         order: true,
         page: true,
         length: true
+    }
+});
+```
+
+Initiation with the [ColVis](http://datatables.net/reference/button/colvis) button and [Scroller](https://datatables.net/extensions/scroller/) extension on an AJAX sourced table, as well as disabling un-necessary conditions.
+
+```javascript
+$('#example').DataTable({
+    ajax:           "dataSrc.txt",
+    deferRender:    true,
+    scrollY:        200,
+    scrollCollapse: true,
+    scroller:       true,
+    dom: 'Bfrtip',
+    buttons: [
+        'colvis'
+    ],
+    keepConditions: {
+        page:     false,
+        length:   false,
+        search:   true,
+        order:    true,
+        colvis:   true,
+        scroller: true
     }
 });
 ```

@@ -1,0 +1,87 @@
+<html>
+<head>
+    <title>DataTables KeepConditions Plugin - Scroller & Colvis</title>
+
+    <!-- jQuery Lib -->
+    <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+
+    <!-- Example JS/CSS Files -->
+    <script src="examples.js"></script>
+    <link rel="stylesheet" href="examples.css">
+
+    <!-- DataTables Library -->
+    <script src="http://cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"></script>
+
+    <!-- DT Search Highlight Plugin -->
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/highlight.min.js"></script>
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/styles/default.min.css">
+
+    <!-- Buttons Extension -->
+    <script src="https://cdn.datatables.net/buttons/1.0.3/js/dataTables.buttons.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="http://cdn.datatables.net/1.10.9/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="http://cdn.datatables.net/buttons/1.0.3/css/buttons.dataTables.min.css">
+    <script src="https://cdn.datatables.net/buttons/1.1.0/js/buttons.colVis.min.js"></script>
+
+    <!-- Scroller Extension -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/scroller/1.4.0/css/scroller.dataTables.min.css">
+    <script src="https://cdn.datatables.net/scroller/1.4.0/js/dataTables.scroller.min.js"></script>
+
+    <!-- Keep Conditions Plugin -->
+    <script src="../dataTables.keepConditions.js"></script>
+</head>
+<body>
+<h1>DataTables KeepConditions Plugin - <i>Scroller & Colvis</i></h1>
+<div class="content-box">
+    <strong>Description:</strong> Example of the compatability with the <a href="https://datatables.net/extensions/scroller/" target="_blank">Scroller</a> extension and <a href="http://datatables.net/reference/button/colvis">ColVis</a> button, as well as disabling un-needed conditions.
+</div>
+<a href="index.html">Other Examples</a>
+<hr/><h2>Example Source Code</h2>
+<div id="example-source" class="content-box">
+    Here's the exact jQuery code for this plugin example</div>
+<pre id="example-js-preview">
+<code class="javascript">
+</code>
+</pre>
+<hr/>
+<h2>Example DataTable</h2>
+<div class="content-box">
+    The table below was initiated with <em>KeepConditions</em>, as well as two DataTables extensions, <a href="https://datatables.net/extensions/scroller/" target="_blank">Scroller</a> and the <a href="http://datatables.net/reference/button/colvis">ColVis</a> button. Becuase the Scroller extension is being used, we have no use for the paging or length conditions to be kept, thus, those two were manually disabled, and everything else was enabled.
+</div>
+<table id="example-1" class="display nowrap" cellspacing="0" width="100%">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>First name</th>
+        <th>Last name</th>
+        <th>ZIP / Post code</th>
+        <th>Country</th>
+    </tr>
+    </thead>
+</table>
+</body>
+</html>
+<script id="example-js">
+    $(document).ready(function() {
+        // DataTables initiation with Colvis & Scroller extensions,
+        // disabling conditions for Pagination and Length
+        $('#example-1').DataTable({
+            ajax:           "dataSrc.txt",
+            deferRender:    true,
+            scrollY:        200,
+            scrollCollapse: true,
+            scroller:       true,
+            dom: 'Bfrtip',
+            buttons: [
+                'colvis'
+            ],
+            keepConditions: {
+                page:     false,
+                length:   false,
+                search:   true,
+                order:    true,
+                colvis:   true,
+                scroller: true
+            }
+        });
+    } );
+</script>
