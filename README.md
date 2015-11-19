@@ -10,19 +10,23 @@ The *Keep Conditions* plugin has the capability of keeping the conditions for th
 * Table Length
 * [Column Visibility](http://datatables.net/reference/button/colvis) (A [buttons](http://datatables.net/extensions/buttons/) extension)
 * [Scroll Position](https://datatables.net/extensions/scroller/)
+* [Column Reordering](http://datatables.net/extensions/colreorder/)
 
 #### Links ####
 * *[Live Demo](http://www.linuxdigest.org/misc/script_examples/DataTables-Keep-Conditions/examples/)*
 * *[Blog Post](http://www.linuxdigest.org/blog/2015/11/17/datatables-keep-conditions-plugin-link-to-the-exact-settings-within-the-current-table/)*
 
 ### Parameters ###
-Parameter 			  	| Type 		  		| Default | Description
------------------------ | ----------------- | ------- | ------------
-`keepConditions`	  	| boolean/object	| true	  | Enable/Disable keepConditions plugin
-`keepConditions.page` 	| boolean		  	| true	  | Enable keepConditions for pagination
-`keepConditions.length` | boolean		  	| true	  | Enable keepConditions for page length
-`keepConditions.search` | boolean		  	| true	  | Enable keepConditions for table search/filter
-`keepConditions.order` 	| boolean		  	| true	  | Enable keepConditions for column ordering
+Parameter 			  		| Type 		  		| Default 	| Description
+--------------------------- | ----------------- | --------- | ------------
+`keepConditions`	  		| boolean/object	| true	  	| Enable/Disable keepConditions plugin
+`keepConditions.page` 		| boolean		  	| true	  	| Enable keepConditions for pagination
+`keepConditions.length` 	| boolean		  	| true	  	| Enable keepConditions for page length
+`keepConditions.search` 	| boolean		  	| true	  	| Enable keepConditions for table search/filter
+`keepConditions.order` 		| boolean		  	| true	  	| Enable keepConditions for column ordering
+`keepConditions.scroller` 	| boolean		  	| true	  	| Enable keepConditions for the [Scroller](https://datatables.net/extensions/scroller/) extension
+`keepConditions.colvis` 	| boolean		  	| true	  	| Enable keepConditions for [Column Visibility](http://datatables.net/reference/button/colvis)
+`keepConditions.colorder`	| boolean			| true		| Enable keepConditions for [ColReorder](http://datatables.net/extensions/colreorder/) extension (If enabled)
 
 ##### Keep Conditions Button #####
 Keep Conditions plugin comes with a button! As long as you properly setup the [buttons extension](http://datatables.net/extensions/buttons/), you can include the button `copyConditions`, which will display a button, when clicked, the URL will either be copied to the viewers clipboard (with the table conditions), or display an input with selected text, making it easy to copy and share the URL. An example if this is below.
@@ -87,7 +91,7 @@ $('.example-2').DataTable({ // Using Class
 });
 ```
 
-Initiation with the [ColVis](http://datatables.net/reference/button/colvis) button and [Scroller](https://datatables.net/extensions/scroller/) extension on an AJAX sourced table, as well as disabling un-necessary conditions.
+Initiation with the [ColVis](http://datatables.net/reference/button/colvis) button, as well as the [ColReorder](http://datatables.net/extensions/colreorder/)  and [Scroller](https://datatables.net/extensions/scroller/) extensions, on an AJAX sourced table, as well as disabling un-necessary conditions.
 
 ```javascript
 $('#example').DataTable({
@@ -97,6 +101,7 @@ $('#example').DataTable({
     scrollCollapse: true,
     scroller:       true,
     dom: 'Bfrtip',
+    colReorder: true,
     buttons: [
         'colvis'
     ],

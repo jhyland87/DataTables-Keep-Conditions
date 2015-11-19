@@ -23,6 +23,7 @@
  *      Column Ordering
  *      Scroller Extension ( http://datatables.net/extensions/scroller/ )
  *      Column Visibility ( http://datatables.net/reference/button/colvis )
+ *      Column Reorder ( http://datatables.net/extensions/colreorder/ )
  *
  * @example
  *    // Basic Initialization (All conditions by default)
@@ -150,13 +151,9 @@
         // Only set the scroller position if the extension is included and the rounded scroller position isn't 0
         if ( _isEnabled( 'scroller' )
             && _dtSettings.oScroller !== undefined 
-            && Math.round(_dtSettings.oScroller.s.baseRowTop) !== 0){
-            // _dtSettings.oScroller.s.baseRowTop
-            // _dtSettings.oScroller.s.topRowFloat
-            // Math.round()
-            //console.debug('_dtSettings',_dtSettings);
+            && Math.round(_dtSettings.oScroller.s.baseRowTop) !== 0)
             tableHash.push( 'c' + Math.round(_dtSettings.oScroller.s.baseRowTop) );
-        }
+            tableHash.push( 'r' + api.colReorder.order().join('.') );
 
         // Only set column visibility if one or more columns are hidden, and only store the lesser value
         // in the hash (Visible vs Hidden)
@@ -178,6 +175,10 @@
             else
                 tableHash.push( 'vt' + t.join('.') );
         }
+
+        // Only set the column order if the column indexes are not in the default order
+        if ( _isEnabled( 'colorder' )
+            && JSON.stringify( api.colReorder.order() ) !== JSON.stringify( api.columns().indexes().toArray() ) )
 
         hash[ tableID ] = tableHash.join(':');
 
@@ -210,7 +211,8 @@
                     l: 'length',
                     p: 'page',
                     c: 'scroller',
-                    v: 'colvis'
+                    v: 'colvis',
+                    r: 'colorder'
                 },
                 parsedCons = {};
 
@@ -242,6 +244,13 @@
                             ];
                             break;
 
+                        // Column Order
+                        case 'r':
+                            parsedCons[ availableCons[ c.charAt( 0 ) ] ] = c.substring( 1 ).split( '.' ).map( function( i ){
+                                return parseInt( i );
+                            });
+                            break;
+
                         default:
                             parsedCons[ availableCons[ c.charAt( 0 ) ] ] = c.substring( 1 );
                             break;
@@ -265,7 +274,7 @@
         if ($.isPlainObject(options) || options === true) {
             var config     = $.isPlainObject(options) ? options : {},
                 api        = new $.fn.dataTable.Api( dtSettings ),
-                hash       = _parseHash($( api.table().node() ).attr('id')),
+                hash       = _parseHash( $( api.table().node() ).attr('id') ),
                 hashParams = {
                     api: api,
                     options: dtSettings.oInit
@@ -303,6 +312,7 @@
                     api.page( parseInt( hash.page ) );
             }
 
+            // Scroller extension condition
             if ( _isEnabled( 'scroller' ) ) {
                 api.on( 'draw.dt', hashParams, _updateHash );
 
@@ -310,6 +320,19 @@
                     api.row( parseInt( hash.scroller ) ).scrollTo();
             }
 
+            // Column order condition
+            if ( _isEnabled( 'colorder' ) ) {
+                api.on( 'column-reorder.dt', hashParams, _updateHash );
+
+                console.debug('hash.colorder',hash.colorder);
+                console.debug('api.colReorder.order()',api.colReorder.order());
+
+                if ( hash.colorder
+                    && JSON.stringify( hash.colorder ) !== JSON.stringify( api.colReorder.order() ))
+                    api.colReorder.order( hash.colorder, true );
+            }
+
+            // Column visibility condition
             if ( _isEnabled( 'colvis' ) ) {
                 api.on( 'column-visibility.dt', hashParams, _updateHash );
 
