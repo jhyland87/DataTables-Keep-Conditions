@@ -5,6 +5,7 @@ Store the DataTable conditions within the URL hash every time a condition is cha
 ### Conditions ###
 The *Keep Conditions* plugin has the capability of keeping the conditions for the following:
 
+
 Setting/Extension		| Name			| Key	| Links
 ----------------------- | ------------- | ----- | --------------
 Table Search String		| `search`		| `f`	|
