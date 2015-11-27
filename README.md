@@ -4,15 +4,16 @@ Store the DataTable conditions within the URL hash every time a condition is cha
 
 ### Conditions ###
 The *Keep Conditions* plugin has the capability of keeping the conditions for the following:
-Setting/Extension		| Name		| Key
------------------------ | --------- | -------------
-Table Search String		| `search`	| `f`
-Column Ordering/Sorting | `order`	| `o`
-Pagination				| `page`	| `p`
-Table Length			| `length`	| `l`
-[Column Visibility](http://datatables.net/reference/button/colvis) (A [buttons](http://datatables.net/extensions/buttons/) extension) | `colvis` | `v`
-[Scroll Position](https://datatables.net/extensions/scroller/)	| `scroller`	| `s`
-[Column Reordering](http://datatables.net/extensions/colreorder/) | `colorder`	| `c`
+
+Setting/Extension		| Name			| Key	| Links
+----------------------- | ------------- | ----- | --------------
+Table Search String		| `search`		| `f`	|
+Column Ordering/Sorting | `order`		| `o`	|
+Pagination				| `page`		| `p`	|
+Table Length			| `length`		| `l`	|
+Column Visibility		| `colvis` 		| `v`	| [ColVis](http://datatables.net/reference/button/colvis) (A [buttons](http://datatables.net/extensions/buttons/) extension)
+Scroll Position			| `scroller`	| `s`	| [Scroller](https://datatables.net/extensions/scroller/)
+Column Reordering		| `colorder`	| `c`	| [ColOrder](http://datatables.net/extensions/colreorder/)
 
 **Note:** The only condition that I decided to *not* implement, would be the row order (for the [RowReorder](http://datatables.net/extensions/rowreorder/) extension). There are several reasons I decided not to, but primarily, because it would be difficult to know which rows were in what order, unless the [RowId](http://datatables.net/reference/option/rowId) option was used, which is mostly only for JSON or AJAX sourced tables, which I found its a pain to get rowReorder to work for those data sources anyways.
 
