@@ -2,32 +2,34 @@
 <head>
     <title>DataTables KeepConditions Plugin - Scroller & Colvis</title>
 
-    <!-- jQuery Lib -->
-    <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <!-- jQuery Library -->
+    <script src="http://code.jquery.com/jquery-2.1.4.js"></script>
 
-    <!-- Example JS/CSS Files -->
-    <script src="examples.js"></script>
-    <link rel="stylesheet" href="examples.css">
-
-    <!-- DataTables Library -->
+    <!-- Core DataTables library/CSS -->
     <script src="http://cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="http://cdn.datatables.net/1.10.9/css/jquery.dataTables.min.css">
 
-    <!-- DT Search Highlight Plugin -->
+    <!-- DataTables Search Highlight plugin (Not required, just makes it easier to realize the tables filtered -->
     <script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/highlight.min.js"></script>
     <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/styles/default.min.css">
 
-    <!-- Buttons Extension -->
-    <script src="https://cdn.datatables.net/buttons/1.0.3/js/dataTables.buttons.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="http://cdn.datatables.net/1.10.9/css/jquery.dataTables.min.css">
-    <link rel="stylesheet" type="text/css" href="http://cdn.datatables.net/buttons/1.0.3/css/buttons.dataTables.min.css">
-    <script src="https://cdn.datatables.net/buttons/1.1.0/js/buttons.colVis.min.js"></script>
-
-    <!-- Scroller Extension -->
+    <!-- DataTables Scroller Extension (Only required if using the Scroller Extension) -->
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/scroller/1.4.0/css/scroller.dataTables.min.css">
     <script src="https://cdn.datatables.net/scroller/1.4.0/js/dataTables.scroller.min.js"></script>
 
-    <!-- Keep Conditions Plugin -->
-    <script src="../dataTables.keepConditions.js"></script>
+    <!-- DataTables Buttons Extension library/CSS (Only required if using the 'Copy Conditions' button -->
+    <script src="https://cdn.datatables.net/buttons/1.0.3/js/dataTables.buttons.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="http://cdn.datatables.net/buttons/1.0.3/css/buttons.dataTables.min.css">
+
+    <!-- DataTables ColVis Button Extension library (Only required for ColVis) -->
+    <script src="https://cdn.datatables.net/buttons/1.1.0/js/buttons.colVis.min.js"></script>
+
+    <!-- Keep Conditions Plugin Library -->
+    <script src="../dist/dataTables.keepConditions.js"></script>
+
+    <!-- Just some JS/CSS for the examples (Also, not required) -->
+    <script src="examples.js"></script>
+    <link rel="stylesheet" href="examples.css">
 </head>
 <body>
 <h1>DataTables KeepConditions Plugin - <i>Scroller & Colvis</i></h1>
@@ -65,6 +67,7 @@
         // DataTables initiation with Colvis & Scroller extensions,
         // disabling conditions for Pagination and Length
         $('#example-1').DataTable({
+            searching:      true,
             ajax:           "dataSrc.txt",
             deferRender:    true,
             scrollY:        200,
@@ -74,14 +77,7 @@
             buttons: [
                 'colvis'
             ],
-            keepConditions: {
-                page:     false,
-                length:   false,
-                search:   true,
-                order:    true,
-                colvis:   true,
-                scroller: true
-            }
+            keepConditions: ['order','colvis','scroller']
         });
     } );
 </script>

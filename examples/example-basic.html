@@ -1,16 +1,24 @@
 <html>
 <head>
     <title>DataTables KeepConditions Plugin - Basic</title>
-    <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
-    <script src="examples.js"></script>
-    <link rel="stylesheet" href="examples.css">
+
+    <!-- jQuery Library -->
+    <script src="http://code.jquery.com/jquery-2.1.4.js"></script>
+
+    <!-- Core DataTables library/CSS -->
+    <script src="http://cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="http://cdn.datatables.net/1.10.9/css/jquery.dataTables.min.css">
+
+    <!-- DataTables Search Highlight plugin (Not required, just makes it easier to realize the tables filtered -->
     <script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/highlight.min.js"></script>
     <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/styles/default.min.css">
-    <script src="http://cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"></script>
-    <script src="../dataTables.keepConditions.js"></script>
-    <script src="https://cdn.datatables.net/buttons/1.0.3/js/dataTables.buttons.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="http://cdn.datatables.net/1.10.9/css/jquery.dataTables.min.css">
-    <link rel="stylesheet" type="text/css" href="http://cdn.datatables.net/buttons/1.0.3/css/buttons.dataTables.min.css">
+
+    <!-- Keep Conditions Plugin Library -->
+    <script src="../dist/dataTables.keepConditions.js"></script>
+
+    <!-- Just some JS/CSS for the examples (Also, not required) -->
+    <script src="examples.js"></script>
+    <link rel="stylesheet" href="examples.css">
 </head>
 <body>
 <h1>DataTables KeepConditions Plugin - <i>Basic</i></h1>
@@ -30,7 +38,7 @@
 <div class="content-box">
     The table below was initiated with <em>KeepConditions</em>, simply set to <strong>true</strong>, with no other options for either the plugin, or DataTables itself. This will lead to the settings being defaulted, which for <em>KeepConditions</em>, means <em>every condition</em> will be kept (ordering, length, pagination and search).
 </div>
-<table id="example-1" class="display" cellspacing="0" width="100%">
+<table id="example" class="display" cellspacing="0" width="100%">
     <thead>
     <tr>
         <th>Name</th>
@@ -515,10 +523,12 @@
 </body>
 </html>
 <script id="example-js">
-    $(document).ready(function() {
+    $( document ).ready(function() {
         // Basic DataTables and KeepConditions initialization - Defaulting everything
-        $('#example-1').DataTable({
-            keepConditions: true
+        $('#example').DataTable({
+            keepConditions: true,
+            paging: true
+            //, searching: false
         });
     } );
 </script>

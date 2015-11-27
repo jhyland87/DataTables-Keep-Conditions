@@ -1,6 +1,6 @@
 <html>
 <head>
-    <title>DataTables KeepConditions Plugin - Basic w/ Button</title>
+    <title>DataTables KeepConditions Plugin - API</title>
 
     <!-- jQuery Library -->
     <script src="http://code.jquery.com/jquery-2.1.4.js"></script>
@@ -25,9 +25,9 @@
     <link rel="stylesheet" href="examples.css">
 </head>
 <body>
-<h1>DataTables KeepConditions Plugin - <i>Basic w/ Button</i></h1>
+<h1>DataTables KeepConditions Plugin - <i>API</i></h1>
 <div class="content-box">
-    <strong>Description:</strong> Example of how <em>KeepConditions</em> can immediately load the DataTables conditions, as well as the <strong>Copy Conditions</strong> button.
+    <strong>Description:</strong> Example of how <em>KeepConditions</em> can initiated with a more advanced configuration.
 </div>
 <a href="index.html">Other Examples</a>
 <hr/><h2>Example Source Code</h2>
@@ -40,9 +40,16 @@
 <hr/>
 <h2>Example DataTable</h2>
 <div class="content-box">
-    The table below was initiated with <em>KeepConditions</em>, and has the <em>Copy Conditions</em> button enabled, to make sharing the exact conditions easier. Also, any text in the notifications can be customized by adding a <em>keepConditions</em> object to the <a href="http://datatables.net/reference/option/language" target="_blank">language</a> initiation option within DataTables, as shown in the example. The text for the button itself can be changed using DataTables <em>title</em> setting, also shown in the example
+    The table below was initiated with <em>KeepConditions</em>, and is set to keep the conditions for everything except the <em>page length</em>.
 </div>
-<table id="example" class="display" cellspacing="0" width="100%">
+<hr/>
+<strong>Actions:</strong>
+<button id="attach">Enable Auto Update</button>
+<button id="detach">Disable Auto Update</button>
+<button id="updateHash">Update Hash</button>
+<button id="retrieve">Retrieve Hash</button>
+<hr/>
+<table id="example-1" class="display" cellspacing="0" width="100%">
     <thead>
     <tr>
         <th>Name</th>
@@ -528,42 +535,34 @@
 </html>
 <script id="example-js">
     $(document).ready(function() {
-        // Initiate DataTables with the keepConditions set to true - enabling conditions for
-        // ALL enabled settings
-        $('#example').DataTable({
-            language: {
-                // Customize the text for the button
-                keepConditions: {
-                    // Title to show if text was successfully copied
-                    btnCopyTitle: 'URL Copied',
-                    // Body for above
-                    btnCopyBody: 'The URL was copied to your clipboard! Have a nice day',
+        // Initiate KeepConditions for only 3 of the 4 possible conditions
+        var table = $('#example-1').DataTable({
+            dom: 'lftipr',
+            keepConditions: {
+                conditions: 'fopl',
+                attachEvents: false
+            }
+        });
 
-                    // Title to show if text was NOT copied, and an input is
-                    // shown with the content selected, and viewer must copy
-                    btnSelectTitle: 'Copy URL',
-                    // Body for above
-                    btnSelectBody: 'Copy the content of the input by either right clicking ' +
-                                   'and selecting "copy", or press Ctrl + "c" on your keyboard'
-                }
-            },
-            // Initialize KeepConditions for all available settings/extensions/plugins
-            keepConditions: true,
-            dom: 'Blftipr',
-            buttons: [
-                // Initialize button with customizations
-                {
-                    extend: 'copyConditions',
-                    // Text for the button itself
-                    text: 'Copy Table Conditions',
-                    // Timeout for the dialog if content was successfully copied
-                    selectTimeout: 1500,
-                    // Timeout for dialog if viewer needs to manually copy content
-                    copyTimeout: 4000
-                }
-                // Or just...
-                //'copyConditions'
-            ]
+
+        $( '#retrieve' ).click(function(){
+            alert('The Hash string with the current conditions is: ' + table.keepConditions.structureHash( true ));
+        });
+
+        $( '#updateHash' ).click(function(){
+            table.keepConditions.structureHash();
+        });
+
+        $( '#attach' ).click(function(){
+            // Attach the callback to update the URL Hash with the current conditions
+            // to the events associated to each condition (draw.dt, scroll.dt, etc)
+            table.keepConditions.attachEvents();
+        });
+
+        $( '#detach' ).click(function(){
+            // Detach the callback to update the URL Hash with the current conditions
+            // from the events associated to each condition (draw.dt, scroll.dt, etc)
+            table.keepConditions.detachEvents();
         });
     } );
 </script>
