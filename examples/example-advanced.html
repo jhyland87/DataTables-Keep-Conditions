@@ -46,7 +46,7 @@
 <div class="content-box">
     The table below was initiated with <em>KeepConditions</em>, and is set to keep the conditions for everything except the <em>page length</em>.
 </div>
-<table id="example-1" class="display" cellspacing="0" width="100%">
+<table id="example" class="display" cellspacing="0" width="100%">
     <thead>
     <tr>
         <th>Name</th>
@@ -533,7 +533,7 @@
 <script id="example-js">
     $(document).ready(function() {
         // Initiate KeepConditions for only 3 of the 4 possible conditions
-        $('#example-1').DataTable({
+        $('#example').DataTable({
             dom: 'lftipr',
             keepConditions: ['search','order','page']
         });

@@ -49,7 +49,7 @@
 <button id="updateHash">Update Hash</button>
 <button id="retrieve">Retrieve Hash</button>
 <hr/>
-<table id="example-1" class="display" cellspacing="0" width="100%">
+<table id="example" class="display" cellspacing="0" width="100%">
     <thead>
     <tr>
         <th>Name</th>
@@ -536,7 +536,7 @@
 <script id="example-js">
     $(document).ready(function() {
         // Initiate KeepConditions for only 3 of the 4 possible conditions
-        var table = $('#example-1').DataTable({
+        var table = $('#example').DataTable({
             dom: 'lftipr',
             keepConditions: {
                 conditions: 'fopl',

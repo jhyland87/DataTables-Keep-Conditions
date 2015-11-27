@@ -49,7 +49,7 @@
 <div class="content-box">
     The table below was initiated with <em>KeepConditions</em>, as well as two DataTables extensions, <a href="https://datatables.net/extensions/scroller/" target="_blank">Scroller</a> and the <a href="http://datatables.net/reference/button/colvis">ColVis</a> button. Becuase the Scroller extension is being used, we have no use for the paging or length conditions to be kept, thus, those two were manually disabled, and everything else was enabled.
 </div>
-<table id="example-1" class="display nowrap" cellspacing="0" width="100%">
+<table id="example" class="display nowrap" cellspacing="0" width="100%">
     <thead>
     <tr>
         <th>ID</th>
@@ -66,7 +66,7 @@
     $(document).ready(function() {
         // DataTables initiation with Colvis & Scroller extensions,
         // disabling conditions for Pagination and Length
-        $('#example-1').DataTable({
+        $('#example').DataTable({
             searching:      true,
             ajax:           "dataSrc.txt",
             deferRender:    true,
