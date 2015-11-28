@@ -608,8 +608,6 @@ class KeepConditions {
 
         var event;
 
-        //this._dtApi.off( oCondition.event, eventParams, KeepConditions.structureHash.bind( KeepConditions ) );
-
         // Single condition or event
         if ( typeof condition === 'string' ) {
             // If were given the exact event
@@ -626,7 +624,7 @@ class KeepConditions {
 
         // Multiple events or conditions
         else if ( $.isArray( condition ) && condition.length > 0 ){
-            $.each( condition, function( i, c ){
+            $.each( condition, ( i, c ) => {
                 // If were given the exact event
                 if ( c.endsWith('.dt') )
                     event = c;
@@ -704,7 +702,7 @@ class KeepConditions {
 
         // Multiple events or conditions
         else if ( $.isArray( condition ) && condition.length > 0 ){
-            $.each( condition, function( i, c ){
+            $.each( condition, ( i, c ) => {
                 // If were given the exact event
                 if ( c.endsWith('.dt') )
                     event = c;
@@ -797,7 +795,7 @@ class KeepConditions {
 
         // Process multiple conditions to enable
         if ( $.isArray( condition ) ){
-            $.each( condition, function( i, c ){
+            $.each( condition, ( i, c ) => {
                 // If its a key, then get the name from the key
                 if ( c.length === 1 )
                     c = this.nameByKey( c );
@@ -846,7 +844,7 @@ class KeepConditions {
 
         // Process multiple conditions to disable
         if ( $.isArray( condition ) ){
-            $.each( condition, function( i, c ){
+            $.each( condition, ( i, c ) => {
                 // If its a key, then get the name from the key
                 if ( c.length === 1 )
                     c = this.nameByKey( c );

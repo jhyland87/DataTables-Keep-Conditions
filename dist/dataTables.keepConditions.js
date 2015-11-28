@@ -491,6 +491,8 @@ var KeepConditions = (function () {
     }, {
         key: 'detachEvent',
         value: function detachEvent(condition) {
+            var _this4 = this;
+
             if (typeof condition === 'undefined') {
                 console.warn('No condition or event specified for KeepConditions.detachEvent(), nothing is getting detached');
 
@@ -503,8 +505,6 @@ var KeepConditions = (function () {
             if (!oCondition) return false;
 
             var event;
-
-            //this._dtApi.off( oCondition.event, eventParams, KeepConditions.structureHash.bind( KeepConditions ) );
 
             // Single condition or event
             if (typeof condition === 'string') {
@@ -531,7 +531,7 @@ var KeepConditions = (function () {
                             else throw new Error('Unknown condition specified: ' + c);
 
                         // Detach event callback
-                        this._dtApi.off(event + '.' + this._eventNamespace);
+                        _this4._dtApi.off(event + '.' + _this4._eventNamespace);
                     });
                 }
 
@@ -561,6 +561,8 @@ var KeepConditions = (function () {
     }, {
         key: 'attachEvent',
         value: function attachEvent(condition) {
+            var _this5 = this;
+
             if (typeof condition === 'undefined') {
                 console.warn('No condition or event specified for KeepConditions.attachEvent(), nothing is getting attached');
 
@@ -606,7 +608,7 @@ var KeepConditions = (function () {
                             else throw new Error('Unknown condition specified: ' + c);
 
                         // Detach event callback
-                        this._dtApi.on(event + '.' + this._eventNamespace, KeepConditions.structureHash.bind(KeepConditions));
+                        _this5._dtApi.on(event + '.' + _this5._eventNamespace, KeepConditions.structureHash.bind(KeepConditions));
                     });
                 }
 
@@ -633,7 +635,7 @@ var KeepConditions = (function () {
     }, {
         key: 'processHash',
         value: function processHash() {
-            var _this4 = this;
+            var _this6 = this;
 
             // Loop through each element in the hash, until we find an element whos key matches the table ID
             $.each(KeepConditions.queryString(), function (table, cons) {
@@ -641,20 +643,20 @@ var KeepConditions = (function () {
                 if ($.isArray(cons) || $.isPlainObject(cons)) cons = cons[0];
 
                 // Skip to the next hash element if this one isn't for the current table
-                if (table !== _this4._tableId) return;
+                if (table !== _this6._tableId) return;
 
                 // Loop through each condition within the Hash, which is delimited by :
                 $.each(cons.split(':'), function (i, c) {
                     var conKey = c.charAt(0),
                         conVal = c.substring(1),
-                        conName = _this4.nameByKey(conKey),
-                        oCondition = _this4.conditions()[conName];
+                        conName = _this6.nameByKey(conKey),
+                        oCondition = _this6.conditions()[conName];
 
                     // Skip condition if its not enabled
-                    if ($.inArray(conName, _this4.getEnabledConditions()) === -1) return;
+                    if ($.inArray(conName, _this6.getEnabledConditions()) === -1) return;
 
                     if (typeof oCondition === 'undefined') {
-                        console.warn('[keepConditions:\' ' + _this4._tableId + '] No condition object found for condition key:', conKey);
+                        console.warn('[keepConditions:\' ' + _this6._tableId + '] No condition object found for condition key:', conKey);
                         return;
                     }
 
@@ -663,7 +665,7 @@ var KeepConditions = (function () {
                 });
 
                 // Draw the table if needed
-                _this4._drawTable();
+                _this6._drawTable();
             });
         }
 
@@ -686,16 +688,18 @@ var KeepConditions = (function () {
     }, {
         key: 'enableCondition',
         value: function enableCondition(condition, structureHash) {
+            var _this7 = this;
+
             var done = false;
 
             // Process multiple conditions to enable
             if ($.isArray(condition)) {
                 $.each(condition, function (i, c) {
                     // If its a key, then get the name from the key
-                    if (c.length === 1) c = this.nameByKey(c);
+                    if (c.length === 1) c = _this7.nameByKey(c);
 
-                    if (this.conditions(c) !== false) {
-                        this._enabledConditions.push(c);
+                    if (_this7.conditions(c) !== false) {
+                        _this7._enabledConditions.push(c);
 
                         done = true;
                     }
@@ -734,16 +738,18 @@ var KeepConditions = (function () {
     }, {
         key: 'disableCondition',
         value: function disableCondition(condition, structureHash) {
+            var _this8 = this;
+
             var done = false;
 
             // Process multiple conditions to disable
             if ($.isArray(condition)) {
                 $.each(condition, function (i, c) {
                     // If its a key, then get the name from the key
-                    if (c.length === 1) c = this.nameByKey(c);
+                    if (c.length === 1) c = _this8.nameByKey(c);
 
-                    if (this.conditions(c) !== false) {
-                        this._enabledConditions.splice($.inArray(c, this._enabledConditions), 1);
+                    if (_this8.conditions(c) !== false) {
+                        _this8._enabledConditions.splice($.inArray(c, _this8._enabledConditions), 1);
 
                         done = true;
                     }
@@ -819,7 +825,7 @@ var KeepConditions = (function () {
     }, {
         key: 'conditions',
         value: function conditions(con) {
-            var _this5 = this;
+            var _this9 = this;
 
             var _parent = this;
 
@@ -1222,7 +1228,7 @@ var KeepConditions = (function () {
 
                         // Loop through the columns, as soon as one is found to be sortable,
                         // set result to true, and quit the each loop
-                        $.each(_this5._dtSettings.aoColumns, function (colIndx, col) {
+                        $.each(_this9._dtSettings.aoColumns, function (colIndx, col) {
                             if (col.bSortable === true) {
                                 result = true;
                                 return false;
