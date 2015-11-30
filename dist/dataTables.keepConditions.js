@@ -119,7 +119,7 @@ var KeepConditions = (function () {
         // Check that we were initiated on an actual DataTable (Either by selector,
         // a DT instance, or an API instance of a DT)
         if (!$.fn.DataTable.isDataTable(dtSettings) && !dtSettings instanceof $.fn.dataTable.Api) {
-            throw new Error('Failed to initialize KeepConditions on non-datatable object');
+            throw new Error('Failed to initialize KeepConditions plugin on non-datatable object');
         }
 
         /**
@@ -127,14 +127,26 @@ var KeepConditions = (function () {
          */
         if (dtSettings instanceof $.fn.dataTable.Api) this._dtApi = dtSettings;else this._dtApi = new $.fn.dataTable.Api(dtSettings);
 
-        // In case this was initiated via something like a CSS selector, reset the settings
-        // via the API we know is legit
+        /**
+         * In case this was initiated via something like a CSS selector, reset the settings
+         * via the API we know is legit
+         */
         dtSettings = this._dtApi.settings()[0];
+
+        /**
+         * DataTables settings object for this DT instance
+         */
+        this._dtSettings = dtSettings;
 
         /**
          * Unique table ID of this DT Instance
          */
         this._tableId = $(this._dtApi.table().node()).attr('id');
+
+        /**
+         * DataTables default settings
+         */
+        this._dtDefaults = $.fn.dataTable.defaults;
 
         /**
          * Map of the condition keys to the condition names
@@ -147,16 +159,6 @@ var KeepConditions = (function () {
          * to the table, and the table wasn't redrawn
          */
         this._shouldDraw = false;
-
-        /**
-         * DataTables settings object for this DT instance
-         */
-        this._dtSettings = dtSettings;
-
-        /**
-         * DataTables default settings
-         */
-        this._dtDefaults = $.fn.dataTable.defaults;
 
         /**
          * List of enabled conditions, populated when DataTables is initiated

@@ -111,7 +111,7 @@ class KeepConditions {
         // a DT instance, or an API instance of a DT)
         if ( ! $.fn.DataTable.isDataTable( dtSettings )
             && ! dtSettings instanceof $.fn.dataTable.Api ) {
-            throw new Error('Failed to initialize KeepConditions on non-datatable object');
+            throw new Error('Failed to initialize KeepConditions plugin on non-datatable object');
         }
 
         /**
@@ -122,15 +122,26 @@ class KeepConditions {
         else
             this._dtApi = new $.fn.dataTable.Api( dtSettings );
 
-        // In case this was initiated via something like a CSS selector, reset the settings
-        // via the API we know is legit
+        /**
+         * In case this was initiated via something like a CSS selector, reset the settings
+         * via the API we know is legit
+         */
         dtSettings  = this._dtApi.settings()[ 0 ];
 
+        /**
+         * DataTables settings object for this DT instance
+         */
+        this._dtSettings            = dtSettings;
 
         /**
          * Unique table ID of this DT Instance
          */
         this._tableId               = $( this._dtApi.table( ).node( ) ).attr( 'id' );
+
+        /**
+         * DataTables default settings
+         */
+        this._dtDefaults            = $.fn.dataTable.defaults;
 
         /**
          * Map of the condition keys to the condition names
@@ -143,16 +154,6 @@ class KeepConditions {
          * to the table, and the table wasn't redrawn
          */
         this._shouldDraw            = false;
-
-        /**
-         * DataTables settings object for this DT instance
-         */
-        this._dtSettings            = dtSettings;
-
-        /**
-         * DataTables default settings
-         */
-        this._dtDefaults            = $.fn.dataTable.defaults;
 
         /**
          * List of enabled conditions, populated when DataTables is initiated
@@ -1138,7 +1139,7 @@ class KeepConditions {
                 },
 
                 // Check if a value for this condition is currently set for the table (and not at default)
-                isset: ( ) => Math.trunc( parseInt(_parent._dtSettings.oScroller.s.baseRowTop) ) !== 0,
+                isset: ( ) => Math.trunc( parseInt( _parent._dtSettings.oScroller.s.baseRowTop ) ) !== 0,
 
                 // Return the new value to be stored in the hash for this conditions component
                 newHashVal: ( ) => {
@@ -1413,8 +1414,14 @@ class KeepConditions {
         if ( e.namespace !== 'dt' )
             return;
 
-        if ( dtSettings.oInit.keepConditions !== undefined )
-            new KeepConditions( dtSettings );
+        // oInit.keepConditions as anything but undefined or false should be enabled, if
+        // it's false or undefined, then it can still be initiated later manually
+        if ( dtSettings.oInit.keepConditions === undefined
+            || dtSettings.oInit.keepConditions === false )
+            return;
+
+        // Simple initiation! Same way it would be done manually externally
+        new KeepConditions( dtSettings );
     });
 
     /**
