@@ -19,8 +19,8 @@ Column Reordering		| `colorder`	| `c`	| [ColOrder](http://datatables.net/extensi
 **Note:** The only condition that I decided to *not* implement, would be the row order (for the [RowReorder](http://datatables.net/extensions/rowreorder/) extension). There are several reasons I decided not to, but primarily, because it would be difficult to know which rows were in what order, unless the [RowId](http://datatables.net/reference/option/rowId) option was used, which is mostly only for JSON or AJAX sourced tables, which I found its a pain to get rowReorder to work for those data sources anyways.
 
 #### Links ####
-* *[Live Demo](http://www.linuxdigest.org/misc/script_examples/DataTables-Keep-Conditions/examples/)*
-* *[Blog Post](http://www.linuxdigest.org/blog/2015/11/17/datatables-keep-conditions-plugin-link-to-the-exact-settings-within-the-current-table/)*
+* *[Live Demo](http://demo.jsdigest.com/DataTables-Keep-Conditions/examples/)*
+* *[Blog Post](http://www.jsdigest.com/datatables-keep-conditions-plugin-link-exact-settings-within-current-table//)
 
 ### Parameters ###
 Parameter 			  			| Type 		  					| Default 	| Description
