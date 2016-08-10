@@ -1,0 +1,100 @@
+<html>
+<head>
+    <title>DataTables KeepConditions Plugin - ColReorder</title>
+
+    <!-- jQuery Library -->
+    <script src="http://code.jquery.com/jquery-2.1.4.js"></script>
+
+    <!-- Core DataTables library/CSS -->
+    <script src="http://cdn.datatables.net/1.10.9/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="http://cdn.datatables.net/1.10.9/css/jquery.dataTables.min.css">
+
+    <!-- DataTables Search Highlight plugin (Not required, just makes it easier to realize the tables filtered -->
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/highlight.min.js"></script>
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/styles/default.min.css">
+
+    <!-- DataTables Buttons Extension library/CSS (Only required if using the 'Copy Conditions' button -->
+    <script src="https://cdn.datatables.net/buttons/1.0.3/js/dataTables.buttons.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="http://cdn.datatables.net/buttons/1.0.3/css/buttons.dataTables.min.css">
+
+    <!-- DataTables ColReorder Extension library/CSS (Only required if using the ColReorder extension) -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/colreorder/1.3.0/css/colReorder.dataTables.min.css">
+    <script src="https://cdn.datatables.net/colreorder/1.3.0/js/dataTables.colReorder.min.js"></script>
+
+    <!-- DataTables Select Extension library/CSS (Only required if using the Select extension) -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.2.0/css/select.dataTables.min.css">
+    <script src="https://cdn.datatables.net/select/1.2.0/js/dataTables.select.min.js"></script>
+
+    <!-- Keep Conditions Plugin Library -->
+    <script src="../src/dataTables.keepConditions.js"></script>
+
+    <!-- Just some JS/CSS for the examples (Also, not required) -->
+    <script src="examples.js"></script>
+    <link rel="stylesheet" href="examples.css">
+</head>
+<body>
+<h1>DataTables KeepConditions Plugin - <i>ColReorder</i></h1>
+<div class="content-box">
+    <strong>Description:</strong> Example of <em>keepConditions</em> working with the <a href="http://datatables.net/extensions/colreorder/" target="_blank">ColReorder</a> extension from DataTables.
+</div>
+<a href="index.html">Other Examples</a>
+<hr/><h2>Example Source Code</h2>
+<div id="example-source" class="content-box">
+    Here's the exact jQuery code for this plugin example</div>
+<pre id="example-js-preview">
+<code class="javascript">
+</code>
+</pre>
+<hr/>
+<h2>Example DataTable</h2>
+<div class="content-box">
+    The table below was initiated with <em>KeepConditions</em> and the <a href="http://datatables.net/extensions/colreorder/" target="_blank">ColReorder</a> extension:
+</div>
+<table id="example" class="display" cellspacing="0" width="100%">
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Position</th>
+        <th>Office</th>
+        <th>Age</th>
+        <th>Start date</th>
+        <th>Salary</th>
+    </tr>
+    </thead>
+
+    <tfoot>
+    <tr>
+        <th>Name</th>
+        <th>Position</th>
+        <th>Office</th>
+        <th>Age</th>
+        <th>Start date</th>
+        <th>Salary</th>
+    </tr>
+    </tfoot>
+
+    <tbody>
+    </tbody>
+</table>
+</body>
+</html>
+<script id="example-js">
+    $(document).ready(function() {
+        $('#example').DataTable({
+            ajax: 'ajax-src.json',
+            rowId: 'id',
+            "columns": [
+                { "data": "name" },
+                { "data": "position" },
+                { "data": "office" },
+                { "data": "extn" },
+                { "data": "start_date" },
+                { "data": "salary" }
+            ],
+            keepConditions: true,
+            select: {
+                style: 'multi'
+            }
+        });
+    } );
+</script>
