@@ -12,6 +12,9 @@
  *
  * License      MIT - http://datatables.net/license/mit
  *
+ * To-do:
+ *  - Detect ranges for row select feature
+ *
  * Store the DataTable conditions within the URL hash every time a condition is changed,
  * such as the page, length, search or a column order, making it possible to copy/paste
  * the URL. Once said URL is loaded, the conditions will be retrieved from the URL hash
@@ -1337,7 +1340,6 @@ class KeepConditions {
                     else
                         rows = $.map( hashComponent.split('.'), val => parseInt( val ) )
 
-
                     console.log('rowId:',_parent._dtSettings.rowId,'type:',_parent._dtSettings._select.style,'rows:',rows)
 
                     if( _parent._dtSettings._select.style === 'multi' )
@@ -1359,9 +1361,9 @@ class KeepConditions {
                         return undefined
 
                     if( typeof _parent._dtSettings.rowId !== 'undefined' )
-                        return selectedRows.ids().join('.')
+                        return selectedRows.ids().sort().join('.')
                     else 
-                        return selectedRows.indexes().join('.') 
+                        return selectedRows.indexes().sort().join('.') 
                 }
             },
 
