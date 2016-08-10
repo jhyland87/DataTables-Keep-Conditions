@@ -13,7 +13,13 @@
  * License      MIT - http://datatables.net/license/mit
  *
  * To-do:
- *  - Detect ranges for row select feature
+ *  -   Detect ranges for row select feature
+ *  -   Implement functionality to use window.history.pushState( null, null, "/new-uradsfl" ) 
+ *      to update the url, instead of the hash
+ *  -   To help condense the URL length, for the Select extension, specify either the 
+ *      IDs/Indexes selected or deselected (whichever has less values)
+ *  -   On init, drop any columns/rows in the status hash if the ID/index don't exist
+ *  -   Add functionality for KeyTable extension
  *
  * Store the DataTable conditions within the URL hash every time a condition is changed,
  * such as the page, length, search or a column order, making it possible to copy/paste
@@ -88,7 +94,15 @@
  *    });
  */
 
-"use strict";
+"use strict"
+
+var hashDelimiters = {
+    listValues      : '.',
+    valueRange      : '-',
+    statusSegments  : ';',
+    keyval          : '=',
+    hashValues      : '&'
+}
 
 class KeepConditions {
     /**
@@ -185,6 +199,101 @@ class KeepConditions {
         this._init( );
     }
 
+    static sequenceList( listItems ){
+        if( ! $.isArray( listItems ) )
+            throw 'Can only sequence an array'
+      
+        if( listItems.length === 0 )
+            return []
+      
+        listItems = listItems.sort()
+        
+        //let sequence = _parent._dtApi.colReorder.order(),
+        //let sequence = items,
+            // Temp var used to store the previous number, reset on every iteration
+        let prev,
+            // Gets joined by '.' on return
+            result = [],
+            // Current collection if sequenced numbers
+            collection = [],
+            // Return the number in the collection that is i spaces from the end
+            lastInCol = i => collection[ collection.length-i ],
+            // Compile the collection (If > 2 characters, then it adds 'first-last',
+            // if its just two characters, then it adds 'first.second'). Then empty
+            // the collection array, and return the newly constructed string
+            compileColl = ( preserveCollection ) =>  {
+                let ret = collection[ 0 ] + ( collection.length === 2 
+                    ? hashDelimiters[ 'value' ] + collection[ 1 ] 
+                    : hashDelimiters[ 'valueRange' ] + lastInCol( 1 ) )
+
+                if( preserveCollection !== true )
+                    collection = []
+                  
+                return ret
+            }
+
+        // Shorten the sequence of numbers (Converting something like
+        // 1, 2, 3, 4 to 1-4, going in both directions
+        $.each(listItems, ( i, s ) => {
+            s = parseInt( s )
+
+            // First one just gets added to result
+            if( typeof prev === 'undefined'){
+                result.push(s)
+            }
+            // Anything after the first..
+            else {
+                // If were on a roll with the sequence..
+                if( collection.length > 0 ){
+                    // Check if were in sequence with the collection (Incrementing)
+                    /*if( lastInCol( 1 ) > lastInCol( 2 ) && s === lastInCol( 1 )+1 ){
+                        collection.push( s )
+                    }
+                    // Check if were in sequence with the collection (Going negative)
+                    else if( lastInCol( 1 ) < lastInCol( 2 ) && s === lastInCol( 1 )-1 ){
+                        collection.push( s )
+                    }*/
+                    
+                    if( ( lastInCol( 1 ) > lastInCol( 2 ) && s === lastInCol( 1 )+1 ) 
+                        || ( lastInCol( 1 ) < lastInCol( 2 ) && s === lastInCol( 1 )-1 ) )
+                      // Were running a collection, but this number isnt in sequence, so
+                      // terminate the collection and add the collection and the current
+                      // int to the result array
+                        collection.push( s )
+                    
+                    else 
+                        result = result.concat.apply( result, [ compileColl(  ), s ] )
+                }
+                // Otherwise, check if we should start a sequence..
+                else {
+                    // If this int and the prev are sequential in either direction,
+                    // start the collection
+                    if( s === prev+1 || s === prev-1 ){
+                        // Pull the last item from the result
+                        result.splice( result.length-1, 1 )
+                        
+                        collection = collection.concat.apply( collection, [ prev, s ] )
+                    }
+                    // This number isnt in sequence with the last one, so dont start
+                    // a collection
+                    else {
+                        result.push( s )
+                    }
+                }
+            }
+            prev = s
+        })
+
+        // Once the $.each loop is done, we need to ensure that
+        // there's no leftover collection numbers
+        if( collection.length > 0 )
+            result.push( compileColl() )
+
+        // Result should convert something like '[9,1,2,3,4,8,6,5,0]' to '9.1-4.8-5.0',
+        // which is easily kept in the URL, and converted back later
+        return result.join( hashDelimiters[ 'value' ] )
+    }
+
     // -----------------------------------------------------------
 
     /**
@@ -199,7 +308,7 @@ class KeepConditions {
     static queryString ( ){
         var queryString  = {},
             query        = window.location.hash.substring( 1 ),
-            vars         = query.split("&");
+            vars         = query.split( "&" );
 
         for ( let i = 0; i < vars.length; i++ )	{
             let pair = vars[ i ].split ( "=" );
@@ -274,7 +383,7 @@ class KeepConditions {
             dtOptions   = dtSettings.oInit,
             conditions  = dtSettings.oKeepConditions.getEnabledConditions( ),
             hashParsed  = KeepConditions.queryString( ),
-            tableID     = $( dtApi.table( ).node( ) ).attr('id'),
+            tableID     = $( dtApi.table( ).node( ) ).attr( 'id' ),
             hash        = {}, // End result hash (will be processed into URL hash)
             tableHash   = [], // The conditions for THIS table
             urlHash     = []; // Gets joined by &
@@ -306,14 +415,14 @@ class KeepConditions {
             }
         });
 
-        hash[ tableID ] = tableHash.join( ':' );
+        hash[ tableID ] = tableHash.join( hashDelimiters[ 'hashValues' ] );
 
-        $.each(hash, (table,conditions) => {
-            if(conditions.length > 0)
+        $.each( hash, ( table, conditions ) => {
+            if( conditions.length > 0 )
                 urlHash.push(`${table}=${conditions}` );
         } );
 
-        var newHash = urlHash.join( '&' );
+        var newHash = urlHash.join( hashDelimiters[ 'table' ] );
 
         // If were just retrieving the hash, then return it...
         if ( retrieve === true )
@@ -551,7 +660,7 @@ class KeepConditions {
                 })
             }
             else if( typeof oCondition.event === 'string' ){
-                                console.log( `Condition ${sCondition} has one event: ${oCondition.event}` )
+                 console.log( `Condition ${sCondition} has one event: ${oCondition.event}` )
 
                 // Attach the method that updates the hash, to the event associated with this condition
                 this._dtApi.on( `${oCondition.event}.${this._eventNamespace}`, eventParams, KeepConditions.structureHash.bind( KeepConditions ) );
@@ -763,7 +872,7 @@ class KeepConditions {
         $.each( KeepConditions.queryString( ), ( table, cons ) => {
             // If somehow thers more than one condition for this table, just take the first one..
             if ( $.isArray( cons ) || $.isPlainObject( cons ) )
-                cons = cons[0];
+                cons = cons[ 0 ];
 
             // Skip to the next hash element if this one isn't for the current table
             if ( table !== this._tableId )
@@ -777,7 +886,7 @@ class KeepConditions {
                     oCondition  = this.conditions( )[ conName ];
 
                 // Skip condition if its not enabled
-                if ( $.inArray(conName, this.getEnabledConditions( )) === -1)
+                if ( $.inArray(conName, this.getEnabledConditions( )) === -1 )
                     return;
 
                 if ( typeof oCondition  === 'undefined' ){
@@ -941,7 +1050,9 @@ class KeepConditions {
      * @return  {object}    Object of objects (conditions)
      */
     conditions ( con ) {
-        var _parent = this;
+        var _parent  = this,
+            rangeStr = '-',
+            itemDel  = '.'
 
         /**
          * Main conditions object
@@ -1262,7 +1373,7 @@ class KeepConditions {
 
                     // Shorten the sequence of numbers (Converting something like
                     // 1, 2, 3, 4 to 1-4, going in both directions
-                    $.each(sequence, (i,s) => {
+                    $.each(sequence, ( i, s ) => {
                         s = parseInt(s);
 
                         // First one just gets added to result
@@ -1273,12 +1384,12 @@ class KeepConditions {
                         else {
                             // If were on a roll with the sequence..
                             if(collection.length > 0){
-                                // Check if were in sequence with the collection (Going positive)
-                                if(lastInCol(1) > lastInCol(2) && s === lastInCol(1)+1){
-                                    collection.push(s);
+                                // Check if were in sequence with the collection (Incrementing)
+                                if( lastInCol( 1 ) > lastInCol( 2 ) && s === lastInCol( 1 )+1 ){
+                                    collection.push( s );
                                 }
                                 // Check if were in sequence with the collection (Going negative)
-                                else if(lastInCol(1) < lastInCol(2) && s === lastInCol(1)-1){
+                                else if( lastInCol( 1 ) < lastInCol( 2 ) && s === lastInCol( 1 )-1 ){
                                     collection.push(s);
                                 }
                                 // Were running a collection, but this number isnt in sequence, so
@@ -1355,15 +1466,29 @@ class KeepConditions {
                     return !!_parent._dtSettings._select
                 },
                 newHashVal: ( ) => {
-                    var selectedRows = _parent._dtApi.rows({ selected: true })
+                    var selectedRows   = _parent._dtApi.rows({ selected: true }),
+                        deselectedRows = _parent._dtApi.rows({ selected: false }),
+                        rowData, dataType 
 
                     if( selectedRows.count() === 0 )
+                        return false
+
+                    if( selectedRows.count() < deselectedRows.count() ){
+                        rowData  = selectedRows
+                        dataType = 's'
+                    }
+                    else {
+                        rowData  = deselectedRows
+                        dataType = 'd'
+                    }
+
+                    if( rowData.count() === 0 )
                         return undefined
 
                     if( typeof _parent._dtSettings.rowId !== 'undefined' )
-                        return selectedRows.ids().sort().join('.')
+                        return dataType + '_' +rowData.ids().sort().join('.')
                     else 
-                        return selectedRows.indexes().sort().join('.') 
+                        return dataType + '_' + rowData.indexes().sort().join('.') 
                 }
             },
 
