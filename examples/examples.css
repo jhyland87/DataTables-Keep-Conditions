@@ -50,3 +50,11 @@ label {
     color: #A5A5A5;
     background-color: #EBEFF9;
 }
+
+td.details-control {
+    background: url('https://datatables.net/examples/resources/details_open.png') no-repeat center center;
+    cursor: pointer;
+}
+tr.shown td.details-control {
+    background: url('https://datatables.net/examples/resources/details_close.png') no-repeat center center;
+}
