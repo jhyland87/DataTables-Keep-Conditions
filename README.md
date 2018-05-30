@@ -1,3 +1,7 @@
+## :exclamation: Note: This plugin is not actively maintained :exclamation: 
+###### This plugin/library was created by me out of necessity, and released to help others that may need it. I don't have time to actively maintain the code to keep up with DataTables updates or bugs in my code. If you run into an issue, feel free to attribute your own changes. :thumbsup:
+---
+
 # DataTables Plugin - Keep Conditions #
 
 Store the DataTable conditions within the URL hash every time a condition is changed, such as the page, length, search or a column order, making it possible to copy/paste the URL. Once said URL is loaded, the conditions will be retrieved from the URL hash and implemented to the table on DT initialization.
